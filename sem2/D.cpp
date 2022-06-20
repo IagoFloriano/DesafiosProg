@@ -6,16 +6,13 @@ int main() {
   cin >> n >> k;
   string nome;
   bool deboas = true;
-  list<string> meias;
-  list<string>::iterator it;
+  set<string> meias;
+  pair<set<string>::iterator, bool> it;
 
   for (int i = 0; i < n*2 && deboas; i++){
     cin >> nome;
-    it = find(meias.begin(), meias.end(), nome);
-    if (*it == nome)
-      meias.erase(it);
-    else
-      meias.push_back(nome);
+    it = meias.insert(nome);
+    if (!it.second) meias.erase(it.first);
     if (meias.size() >= k){
       deboas = false;
       break;

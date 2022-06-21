@@ -14,7 +14,7 @@ int main() {
   cin >> n;
 
   list<int> fita;
-  list<int>::iterator it = fita.begin();
+  list<int>::iterator it;
   list<int>::iterator temp;
   for (int i = 0; i < n; i++){
     char op;
@@ -30,13 +30,14 @@ int main() {
       case 'i':
         int nv;
         cin >> q >> nv;
-        it = fita.insert(it, q, nv);
+        if (!fita.empty())
+          it = fita.insert(it, q, nv);
+        else
+          it = fita.insert(fita.begin(), q, nv);
         break;
 
       case 'd':
         it = fita.erase(it);
-        if (it == fita.end())
-          it--;
         break;
 
       case 'q':

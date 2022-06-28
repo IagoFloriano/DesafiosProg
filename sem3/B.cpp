@@ -17,7 +17,7 @@ ll fast_pow(ll a, ll b){
   if (b == 0) return 1;
   ll temp = fast_pow(a, b/2);
   ll rvalue = ( (temp % prime) * ( temp % prime) ) % prime;
-  if (!(b % 2))
+  if (b % 2 == 1)
     rvalue = ( (a % prime) * ( rvalue % prime) ) % prime;
   return rvalue;
 }
@@ -47,14 +47,10 @@ int main() {
   for (pair<ll,ll> cur: cols){
     ll temp = modfat(cur.first);
     ll temp2 = modfat(cur.first - n + cur.second);
-    cout << cur.first << " " << cur.first -n + cur.second << endl;
-    cout << temp << " " << temp2 << endl;
     temp2 = fast_pow(temp2, prime-2);
     ll temp3 = ( (temp % prime) * (temp2 % prime) ) % prime;
     fats.push_back(temp3);
   }
-  for ( ll f : fats)
-    cout << f << endl;
 
   ll prod = 1;
   for (ll f: fats){

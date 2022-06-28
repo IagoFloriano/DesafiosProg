@@ -47,6 +47,8 @@ int main() {
   for (pair<ll,ll> cur: cols){
     ll temp = modfat(cur.first);
     ll temp2 = modfat(cur.first - n + cur.second);
+    cout << cur.first << " " << cur.first -n + cur.second << endl;
+    cout << temp << " " << temp2 << endl;
     temp2 = fast_pow(temp2, prime-2);
     ll temp3 = ( (temp % prime) * (temp2 % prime) ) % prime;
     fats.push_back(temp3);

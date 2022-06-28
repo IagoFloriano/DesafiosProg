@@ -4,43 +4,55 @@ using ll = long long;
 
 ll prime = 1000000007LL;
 
-ll modfat(ll n, ll stop){
-  if (n == stop) return 1;
-  return ( (n % prime) * (modfat(n-1, stop) % prime) ) % prime;
+vector<ll> lookup;
+
+ll modfat(ll n){
+  if (n == 0 || n == 1) return 1;
+  if (lookup[n] != 0) return lookup[n];
+  lookup[n] = ( (n % prime) * (modfat(n-1) % prime) ) % prime;
+  return lookup[n];
+}
+
+ll fast_pow(ll a, ll b){
+  if (b == 0) return 1;
+  ll temp = fast_pow(a, b/2);
+  ll rvalue = ( (temp % prime) * ( temp % prime) ) % prime;
+  if (!(b % 2))
+    rvalue = ( (a % prime) * ( rvalue % prime) ) % prime;
+  return rvalue;
 }
 
 int main() {
   ll n, c;
   cin >> n >> c;
   vector<pair <ll, ll>> cols;
+  ll biggest =0;
 
   for (ll i = 0; i < n; i++){
     ll temp;
     cin >> temp;
+    if (temp > biggest) biggest = temp;
     cols.push_back(make_pair(temp, 0));
   }
-  for (pair<int, int> pipi: cols)
-    cout << pipi.first << " ";
-  cout << endl;
+
+  lookup.resize(biggest + 1, 0);
 
   for (ll i = 0; i < c; i++){
     int trash, col;
     cin >> trash >> col;
     cols[col-1].second++;
   }
-  for (pair<int, int> pipi: cols)
-    cout << pipi.first - pipi.second << " ";
-  cout << endl;
 
   vector<ll> fats;
   for (pair<ll,ll> cur: cols){
-    ll temp1 = modfat(cur.first, 0);
-    ll temp2 = modfat(cur.second, 0);
-    fats.push_back(temp1/temp2);
+    ll temp = modfat(cur.first);
+    ll temp2 = modfat(cur.first - n + cur.second);
+    temp2 = fast_pow(temp2, prime-2);
+    ll temp3 = ( (temp % prime) * (temp2 % prime) ) % prime;
+    fats.push_back(temp3);
   }
-  for (auto f: fats)
-    cout << f << " ";
-  cout << endl;
+  for ( ll f : fats)
+    cout << f << endl;
 
   ll prod = 1;
   for (ll f: fats){

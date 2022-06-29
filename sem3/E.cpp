@@ -2,51 +2,42 @@
 using namespace std;
 using ll=long long;
 
+ll max_dup(multiset<ll>& conjunto){
+  ll max = 0;
+  for(multiset<ll>::iterator it = conjunto.begin(); it != conjunto.end(); it = conjunto.upper_bound(*it)){
+    ll temp = conjunto.count(*it);
+    if (temp > max) max = temp;
+  }
+  return max;
+}
+
 int main() {
   ll n, k;
   cin >> n >> k;
-  vector<ll> vetor;
+  deque<pair<ll, multiset<ll>::iterator>> vetor;
+  multiset<ll> max;
+  multiset<ll>::iterator it;
+  ll gmax = 0;
+  it = max.insert(0);
+  vetor.push_back(make_pair(0, it));
 
-  for (ll i = 0; i < n; i++){
+  for (ll i = 0; i < k-1; i++){
     ll temp;
     cin >> temp;
-    vetor.push_back(temp);
-  }
-
-  ll gmax = 0;
-  deque<ll> janela;
-
-  map<ll, ll> conjunto;
-  conjunto[0] = 1;
-  janela.push_back(0);
-  for (ll i = 0; i < k -1; i++){
-    janela.push_back(vetor[i]);
-    map<ll, ll>::iterator it = conjunto.find(vetor[i]);
-    if (it == conjunto.end())
-      conjunto[vetor[i]] = 1;
-    else
-      it->second++;
+    it = max.insert(temp);
+    vetor.push_back(make_pair(temp, it));
   }
 
   for (ll i = k-1; i < n; i++){
-    janela.push_back(vetor[i]);
-    map<ll, ll>::iterator it = conjunto.find(vetor[i]);
-    if (it == conjunto.end())
-      conjunto[vetor[i]] = 1;
-    else
-      it->second++;
-
-    (conjunto[janela[0]])--;
-    janela.pop_front();
-
-    it = conjunto.end();
-    it--;
-    if (gmax < it->second){
-      gmax = it->second;
-    }
+    ll temp;
+    cin >> temp;
+    it = max.insert(temp);
+    vetor.push_back(make_pair(temp, it));
+    max.erase(vetor[0].second);
+    vetor.pop_front();
+    temp = max_dup(max);
+    if (temp > gmax) gmax = temp;
   }
 
   cout << gmax << "\n";
-
-
 }

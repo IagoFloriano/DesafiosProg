@@ -2,42 +2,46 @@
 using namespace std;
 using ll=long long;
 
-ll max_dup(multiset<ll>& conjunto){
-  ll max = 0;
-  for(multiset<ll>::iterator it = conjunto.begin(); it != conjunto.end(); it = conjunto.upper_bound(*it)){
-    ll temp = conjunto.count(*it);
-    if (temp > max) max = temp;
-  }
-  return max;
-}
-
 int main() {
   ll n, k;
   cin >> n >> k;
-  deque<pair<ll, multiset<ll>::iterator>> vetor;
-  multiset<ll> max;
-  multiset<ll>::iterator it;
-  ll gmax = 0;
-  it = max.insert(0);
-  vetor.push_back(make_pair(0, it));
+  ll max = 0;
 
-  for (ll i = 0; i < k-1; i++){
+  deque<ll> vetor;
+  
+  for (ll i = 0; i < n; i++){
     ll temp;
     cin >> temp;
-    it = max.insert(temp);
-    vetor.push_back(make_pair(temp, it));
+    vetor.push_back(temp);
   }
 
-  for (ll i = k-1; i < n; i++){
-    ll temp;
-    cin >> temp;
-    it = max.insert(temp);
-    vetor.push_back(make_pair(temp, it));
-    max.erase(vetor[0].second);
-    vetor.pop_front();
-    temp = max_dup(max);
-    if (temp > gmax) gmax = temp;
+  map<ll, ll> contagem;
+
+  for (ll i = 0; i < k; i++){
+    ll tempi = vetor[i];
+    
+    if(contagem.count(tempi)){
+      contagem[tempi]++;
+    } else
+      contagem[tempi] = 1;
+
+    if (contagem[tempi] > max)
+      max = contagem[tempi];
   }
 
-  cout << gmax << "\n";
+  for (ll i = k; i < n; i++){
+    ll tempi = vetor[i];
+    
+    if(contagem.count(tempi)){
+      contagem[tempi]++;
+    } else
+      contagem[tempi] = 1;
+
+    ll tempr = vetor[i-k];
+    contagem[tempr]--;
+
+    if (contagem[tempi] > max)
+      max = contagem[tempi];
+  }
+  cout << max << "\n";
 }

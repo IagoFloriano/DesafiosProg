@@ -10,11 +10,16 @@ int main() {
     string corredor;
     cin >> corredor;
     
-    for (ll j=1;j<corredor.length();j++){
+    //cout << corredor << endl;
+    for (ll j=1;j<=corredor.length();){
       if (corredor[j-1] != '#'){
         quant++;
-        j+=2;
+        corredor[j-1] = '#';
+        if(j+1<corredor.length())corredor[j+1] = '#';
+        if(j<corredor.length())corredor[j] = '#';
       }
+      j++;
+      //cout << corredor << endl;
     }
     
     cout << "Caso " << i << ": " << quant << "\n";

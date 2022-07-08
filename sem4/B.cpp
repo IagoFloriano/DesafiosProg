@@ -2,25 +2,38 @@
 using namespace std;
 using ll=long long;
 
+vector<ll> moedas = {1,5,10,25,50};
+
+vector<vector<ll>> lookup;
+
+ll formas(ll n, ll lcoin){
+  ll quant = 0;
+  if(lcoin < 0 || n < 0) return 0;
+  if(lookup[lcoin][n] != 0) return lookup[lcoin][n];
+  if(n == 0){
+    lookup[lcoin][0] = 1;
+    return 1;
+  }
+  quant += formas(n, lcoin-1);
+  quant += formas(n - moedas[lcoin], lcoin);
+  lookup[lcoin][n] = quant;
+  return quant;
+}
 
 int main() {
   ll valor;
-  vector<ll> moedas = {1,5,10,25,50};
-  vector<ll> formas = {1,2,4,13,50};
+  for(int i=0; i<5; i++){
+    vector<ll> temp (3 * (ll)1e4);
+    lookup.push_back(temp);
+  }
 
   while (cin >> valor){
-    ll quant = 0;
-    ll lcoin = 4;
-    while(valor > 0){
-      if (valor < moedas[lcoin]){
-        lcoin--;
-      }
-      else {
-        quant += formas[lcoin];
-        valor -= moedas[lcoin];
-      }
-      cout << "Valor: " << valor << "\tQuant: " << quant << endl;
-    }
-    cout << quant << "\n";
+    cout << formas(valor,4) << "\n";
   }
+  //for(auto temp: lookup){
+  //  for(auto i: temp){
+  //    cout << i << "\t";
+  //  }
+  //  cout << endl;
+  //}
 }

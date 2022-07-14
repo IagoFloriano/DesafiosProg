@@ -4,36 +4,52 @@ using ll=long long;
 #define NEUTRAL 1
 
 ll N;
-vector<ll> t;
+vector<int> t;
 ll OP(ll a, ll b){
   return a * b;
 }
 
-ll op_inclusive(ll l, ll r) {
-  r++;
-  ll left = NEUTRAL, right = NEUTRAL;
-  for (l += N, r += N; l < r; l /= 2, r /= 2) {
-    if (l & 1) left = OP(left, t[l++]);
-    if (r & 1) right = OP(right, t[--r]);
-  }
-  return OP(left, right);
+int op_inclusive(int l, int r, int ti=1, int tl=1, int tr=N) {
+  if (l > r) { return NEUTRAL; }
+  if (l == tl && r == tr) { return t[ti]; }
+  int tm = (tl + tr) / 2;
+  return OP(op_inclusive(l, min(r, tm), ti*2, tl, tm),
+            op_inclusive(max(l, tm+1), r, ti*2+1, tm+1, tr));
 }
-void set_value(ll i, ll v) {
-  t[i += N] = v;
-  for (i /= 2; i > 0; i /= 2)
-    t[i] = OP(t[i*2], t[i*2+1]);
+
+void set_value(int i, int v, int ti=1, int tl=1, int tr=N) {
+  if (tl == tr) { t[ti] = v; return; }
+  int tm = (tl + tr) / 2;
+  if (i <= tm)
+    set_value(i, v, ti*2, tl, tm);
+  else
+    set_value(i, v, ti*2+1, tm+1, tr);
+  t[ti] = OP(t[ti*2], t[ti*2+1]);
+}
+
+void build(vector<int>& src, int ti=1, int tl=1, int tr=N) {
+  if (tl == tr) {
+  if (tl < src.size()) { t[ti] = src[tl]; }
+    return;
+  }
+  int tm = (tl + tr) / 2;
+  build(src, ti*2, tl, tm);
+  build(src, ti*2+1, tm+1, tr);
+  t[ti] = OP(t[ti*2], t[ti*2+1]);
 }
 
 int main() {
   ll K;
   cin >> N >> K;
-  t = vector<ll>(10 + (2*N), 1);
+  t = vector<int>(4*N);
+  vector<int> in (N+1);
 
-  for(ll i = 1; i < N+1; i++){
-    ll temp;
-    cin >> temp;
-    set_value(i,temp);
+  for(ll i = 1; i <= N; i++){
+    cin >> in[i];
+    if(in[i]<0)in[i] = -1;
+    if(in[i]>0)in[i] = +1;
   }
+  build(in);
 
   for(ll count = 0; count < K; count++){
     char op;
@@ -41,6 +57,8 @@ int main() {
     if (op == 'A'){
       ll i, y;
       cin >> i >> y;
+      if(y<0)y = -1;
+      if(y>0)y = +1;
       set_value(i, y);
     }else{
       ll i, j;

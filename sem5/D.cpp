@@ -6,7 +6,7 @@ vector<int> bit;
 ll N;
 
 void add(int i, int delta) {
-  for (; i < N; i += i & (-i))
+  for (; i <= N; i += i & (-i))
     bit[i] += delta;
 }
 

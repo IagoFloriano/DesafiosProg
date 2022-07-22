@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll=long long;
-const ll oo=1987654321987654321;
+const ll oo=500;
 
 vector<string> nomes;
 
@@ -19,6 +19,7 @@ int main() {
   cin >> n >> m;
 
   vector<vector<ll>> grafo(n, vector<ll>(n,oo));
+  vector<vector<ll>> next(n, vector<ll>(n,-1));
   map<string, ll> chaves;
   nomes = vector<string>(n);
   ll lastchave = 0;
@@ -34,14 +35,20 @@ int main() {
       nomes[lastchave++] = b;
     }
     grafo[chaves[a]][chaves[b]] = 1;
+    next[chaves[a]][chaves[b]] = chaves[b];
   }
-  for(ll i = 0; i < n; i++)
+  for(ll i = 0; i < n; i++){
     grafo[i][i] = 0;
+    next[i][i] = i;
+  }
 
   for(ll i = 0; i < n; i++)
     for(ll j = 0; j < n; j++)
       for(ll k = 0; k < n; k++)
-        grafo[j][k] = min(grafo[j][k], grafo[j][i] + grafo[i][k]);
+        if(grafo[j][i] + grafo[i][k] < grafo[j][k]){
+          grafo[j][k] = grafo[j][i] + grafo[i][k];
+          next[j][k] = next[j][i];
+        }
 
   //for(ll i = 0; i < n; i++)
   //  cout << i << " : " << nomes[i] << "\n";
@@ -54,33 +61,25 @@ int main() {
   //}
 
   ll soma = 0;
-  vector<tuple<int, int, int>> distancias;
+  vector<tuple<int, string, string>> distancias;
   for(ll i = 0; i < n; i++){
     for(ll j = 0; j < n; j++){
       if(grafo[i][j] != 0 && grafo[i][j] != oo){
         soma += grafo[i][j];
-        distancias.push_back(make_tuple((int)grafo[i][j],i,j));
+        distancias.push_back(make_tuple((int)grafo[i][j],nomes[i],nomes[j]));
       }
     }
   }
 
-  sort(distancias.begin(), distancias.end(), cmpqTuple);
+  sort(distancias.begin(), distancias.end());
   cout << (double)soma/distancias.size() << "\n";
-  int destino = get<2>(distancias[(distancias.size()/2)-1]);
-  int inicio  = get<1>(distancias[(distancias.size()/2)-1]);
-  while(inicio != destino){
-    cout << nomes[inicio] << " ";
-    for(int i = 0; i < n; i++){
-      if(grafo[inicio][destino] == 1){
-        inicio = destino;
-        break;
-      }
-      if(i == inicio || i == destino) continue;
-      if(grafo[inicio][i] + grafo[i][destino] == grafo[inicio][destino]){
-        inicio = i;
-        break;
-      }
-    }
+  string destinos = get<2>(distancias[ceil((double)distancias.size()/2)-1]);
+  string inicios  = get<1>(distancias[ceil((double)distancias.size()/2)-1]);
+  int dest = chaves[destinos];
+  int ini = chaves[inicios];
+  while(ini != dest){
+    cout << nomes[ini] << " ";
+    ini = next[ini][dest];
   }
-  cout << nomes[destino] << "\n";
+  cout << destinos << "\n";
 }

@@ -3,13 +3,24 @@ using namespace std;
 using ll=long long;
 const ll oo=1987654321987654321;
 
+vector<string> nomes;
+
+bool cmpqTuple(tuple<int, int, int> a, tuple<int, int, int>b){
+  if(get<0>(a) == get<0>(b)){
+    if(get<1>(a) == get<1>(b))
+      return nomes[get<2>(a)].compare(nomes[get<2>(b)]) < 0;
+    return nomes[get<1>(a)].compare(nomes[get<1>(b)]) < 0;
+  }
+  return get<0>(a) < get<0>(b);
+}
+
 int main() {
   ll n, m;
   cin >> n >> m;
 
   vector<vector<ll>> grafo(n, vector<ll>(n,oo));
   map<string, ll> chaves;
-  vector<string> nomes(n);
+  nomes = vector<string>(n);
   ll lastchave = 0;
   for(ll i = 0; i < m; i++){
     string a, b;
@@ -22,7 +33,6 @@ int main() {
       chaves[b] = lastchave;
       nomes[lastchave++] = b;
     }
-    grafo[chaves[b]][chaves[a]] = 1;
     grafo[chaves[a]][chaves[b]] = 1;
   }
   for(ll i = 0; i < n; i++)
@@ -46,13 +56,15 @@ int main() {
   ll soma = 0;
   vector<tuple<int, int, int>> distancias;
   for(ll i = 0; i < n; i++){
-    for(ll j = i+1; j < n; j++){
-      soma += grafo[i][j];
-      distancias.push_back(make_tuple((int)grafo[i][j],i,j));
+    for(ll j = 0; j < n; j++){
+      if(grafo[i][j] != 0 && grafo[i][j] != oo){
+        soma += grafo[i][j];
+        distancias.push_back(make_tuple((int)grafo[i][j],i,j));
+      }
     }
   }
 
-  sort(distancias.begin(), distancias.end());
+  sort(distancias.begin(), distancias.end(), cmpqTuple);
   cout << (double)soma/distancias.size() << "\n";
   int destino = get<2>(distancias[(distancias.size()/2)-1]);
   int inicio  = get<1>(distancias[(distancias.size()/2)-1]);

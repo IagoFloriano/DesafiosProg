@@ -11,18 +11,8 @@ ll fast_pow(ll a, ll b){
   return rvalue;
 }
 
-vector<bool> sieve(1e7+15,true);
-void eratosthenes(ll n){
-  for(ll i = 2; i*i <= n; i++)
-    if(sieve[i])
-      for(ll j = i*i; j <= n; j+=i)
-        sieve[j] = false;
-}
-
 int main() {
   ll T;
-  sieve[0] = sieve[1] = false;
-  eratosthenes(1e7+15);
   cin >> T;
   while(T--){
     //calcular numero pra fatorizar
@@ -36,16 +26,20 @@ int main() {
     n--;
 
     //fatorizar
-    for(ll i = n; i >= 2; i--){
-      if(sieve[i] && n % i == 0){
+    vector<pair<ll,ll>>fatores(0);
+    for(ll i = 2; i*i <= n; i++){
+      if(n % i == 0){
         ll count = 0;
         while (n % i == 0){
           count++;
           n = n/i;
         }
-        printf("%d %d\n", i, count);
-        i = n+1;
+        fatores.push_back(make_pair(i,count));
       }
+    }
+    if(n>1) fatores.push_back(make_pair(n,1));
+    for(ll i = fatores.size() - 1; i >= 0; i--){
+      printf("%d %d\n",fatores[i].first,fatores[i].second); 
     }
   }
 

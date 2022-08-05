@@ -20,17 +20,18 @@ ll inv(ll a, ll m) {
   return ((x % m) + m) % m;
 }
 
-ll crt(vll a, vll m, int t) {
+ll crt(map<ll,ll>am, int t) {
   ll p = 1;
-  for (ll& mi : m){ 
-    p *= mi;
+  for (map<ll,ll>::iterator it = am.begin(); it != am.end(); it++) {
+    p *= it->first;
   }
   ll ans = 0;
-  for (int i = 0; i < t; i++) {
-    ll tempni = p/m[i];
-    ll tempbi = a[i];
-    ll tempxi = inv(tempni, m[i]);
-    ans += tempni*tempbi*tempxi;
+  
+  for (map<ll,ll>::iterator it = am.begin(); it != am.end(); it++) {
+    ll tempni = (p/it->first) % p;
+    ll tempbi = (it->second) % p;
+    ll tempxi = inv(tempni, it->first) % p;
+    ans = (ans + (tempni*tempbi*tempxi) % p) % p;
   }
   return ans;
 }
@@ -38,9 +39,18 @@ ll crt(vll a, vll m, int t) {
 int main() {
   ll N;
   cin >> N;
-  vll a(N), m(N);
-  for(ll i = 0; i < N; i++)
-    cin >> m[i] >> a[i];
+  map<ll,ll>am;
+  map<ll,ll>::iterator it;
+  for(ll i = 0; i < N; i++){
+    ll a,m;
+    cin >> a >> m;
+    it = am.find(a);
+    if(it != am.end() && it->second != m){
+      printf("-1\n");
+      exit(0);
+    }
+    am[a] = m;
+  }
 
-  printf("%d\n",crt(a,m,N));
+  printf("%d\n",crt(am,N));
 }

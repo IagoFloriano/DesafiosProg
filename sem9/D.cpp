@@ -2,17 +2,11 @@
 using namespace std;
 using ll=long long;
 
-void imprime_set(set<int>a){
-  for(set<int>::iterator it = a.begin(); it != a.end(); it++)
-    printf("\t%d",*it);
-  printf("\n");
-}
-
 int main() {
   ios_base::sync_with_stdio(0);
   int n, m;
   cin >> n >> m;
-  vector<set<int>> empresas(n);
+  vector<vector<int>> empresas(n, vector<int>(m));
   vector<int> in(n);
   for(int i = 0; i < n; i++){
     int c;
@@ -20,27 +14,22 @@ int main() {
     while(c--){
       int temp;
       cin >> temp;
-      empresas[i].insert(temp);
+      empresas[i][temp-1] = 1;
     }
   }
-
-  // for(int i= 0; i < n; i++){
-  //   printf("%d:",i);
-  //   imprime_set(empresas[i]);
-  // }
 
   for(int i = 0; i < n; i++){
     if(in[i] != 0) continue;
 
     for(int j = 0; j < n; j++){
       if(i==j) continue;
-      if(empresas[j].size() < empresas[i].size()) continue;
 
-      bool contem = true;
-      for(set<int>::iterator it = empresas[i].begin(); it != empresas[i].end() && contem; it++)
-        if(empresas[j].find(*it) == empresas[j].end()) contem = false;
+      bool contido = true;
+      for(int n = 0; n < m && contido; n++){
+        if(empresas[i][n] == 1 && empresas[j][n] == 0) contido = false;
+      }
 
-      if(contem) in[j]++;
+      if(contido) in[j]++;
     }
   }
 

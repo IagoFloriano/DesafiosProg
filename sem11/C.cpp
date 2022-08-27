@@ -51,6 +51,13 @@ void set_inclusive(ll l, ll r, ll v, ll ti=1, ll tl=1, ll tr=N) {
   set_inclusive(max(l, temp+1), r, v, ti*2+1, temp+1, tr);
 }
 
+ll getadd(int i, int ti=1, int tl=1, int tr=N) {
+  if (tl == tr) { return t[ti]; }
+  int temp = (tl + tr) / 2;
+  if (i <= temp) { return t[ti] + getadd(i, ti*2, tl, temp); }
+  else { return t[ti] + getadd(i, ti*2+1, temp+1, tr); }
+}
+
 ll get(ll i, ll ti=1, ll tl=1, ll tr=N) {
   if (tl == tr)
     return t[ti];
@@ -81,29 +88,47 @@ int main() {
     src[i] = temp;
   }
 
-  printf("Vetor antes:");
-  for(int i = 1; i <= n; i++)
-    printf("\t%d",src[i]);
-  printf("\n");
+  // printf("Vetor antes               :");
+  // for(int i = 1; i <= n; i++)
+  //   printf("\t%d",src[i]);
+  // printf("\n");
 
   build(src);
 
-  printf("Vetor depois:");
-  for(int i = 1; i <= n; i++)
-    printf("\t%d",t[i]);
-  printf("\n");
+  // printf("Vetor depois              :");
+  // for(int i = 1; i <= n; i++)
+  //   printf("\t%d",getadd(i));
+  // printf("\n");
 
   ll op, a, b, x;
+  ll last = 2;
   while (q--){
     cin >> op >> a >> b;
     if(op == 1){
       cin >> x;
+      last = 1;
       add_inclusive(a, b, x);
+      // printf("Vetor depois (add [%d,%d](%d):",a,b,x);
+      // for(int i = 1; i <= n; i++)
+      //   printf("\t%d",getadd(i));
+      // printf("\n");
     } else if(op == 2){
+      last = 2;
       cin >> x;
       set_inclusive(a, b, x);
+      // printf("Vetor depois (set [%d,%d](%d):",a,b,x);
+      // for(int i = 1; i <= n; i++)
+      //   printf("\t%d",get(i));
+      // printf("\n");
     } else if(op == 3){
-      printf("%d\n", query(a, b, n));
+      ll ans = 0;
+      if(last == 1)
+        for(ll i = a; i <=b; i++)
+          ans += getadd(i);
+      if(last == 2)
+        for(ll i = a; i <=b; i++)
+          ans += get(i);
+      printf("%d\n", ans);
     }
   }
 }
